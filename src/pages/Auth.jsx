@@ -42,7 +42,7 @@ function Auth({insideRegister}) {
                 </div>
               }
               {/* login/register btn */}
-                <div className='text-center'>
+                <div className='text-center mt-3'>
                  {
                   insideRegister ?
                   <button type='button' className='bg-green-700 p-2 w-full rounded'>Register</button>

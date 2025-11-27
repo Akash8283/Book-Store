@@ -8,7 +8,7 @@ import { FaHeart } from "react-icons/fa";
 function Footer() {
   return (
     <div>
-      <div className='md:grid grid-cols-4 gap-7 bg-blue-950 text-white items-cente p-10 px-10 w-full'>
+      <div className='md:grid grid-cols-4 gap-7 bg-black text-white items-cente p-10 px-10 w-full'>
         {/* about */}
         <div>
           <h1 className='font-bold mb-5'>ABOUT</h1>
