@@ -10,7 +10,7 @@ function Auth({insideRegister}) {
     <div className='w-full min-h-screen flex justify-center items-center flex-col bg-[url(/loginbg.jpg)] bg-cover bg-center'>
       <div className="p-10">
         <h1 className='text-3xl font-bold text-white text-center'>BOOK STORE</h1>
-        <div style={{width:"400px"}} className="bg-black text-white p-5 flex flex-col justify-center items-center my-5 rounded-2xl">
+        <div style={{width:"400px"}} className="bg-gray-900 text-white p-5 flex flex-col justify-center items-center my-5 rounded-2xl">
           <div style={{width:"100px",height:"100px",borderRadius:"50%"}} className="border mb-5 flex justify-center items-center">
           <FaUser className='text-3xl'/>
           </div>

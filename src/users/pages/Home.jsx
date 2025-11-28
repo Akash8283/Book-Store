@@ -15,7 +15,7 @@ function Home() {
           <p>Gift your family and friends a book</p>
           {/* seacrh */}
           <div className='mt-9 flex items-center'>
-            <input type="text" className='rounded-3xl bg-white text-2xl text-black w-100 placeholder-gray-500 p-2' placeholder='Search Books Here'/>
+            <input type="text" className='rounded-3xl bg-white  text-black w-100 placeholder-gray-500 p-2' placeholder='Search Books Here'/>
             <button className='text-gray-500' style={{marginLeft:"-40px"}}><FaSearch/></button>
           </div>
          </div>
