@@ -1,10 +1,28 @@
 import React, { useState } from 'react'
 import { FaEye, FaEyeSlash, FaUser } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify';
 
 function Auth({insideRegister}) {
  const [viewPassword,setViewPassword] = useState(false)
-
+ // store data from form
+ const[userDetails,setUserDetails] = useState({
+  username: "",
+  email:"",
+  password:""
+ })
+  // console.log(userDetails);
+  
+  const handleRegister = (e)=>{
+    e.preventDefault()
+    const {username,email,password} = userDetails
+    if (username && email && password) {
+      toast.success("Registration Completed")
+    }
+    else{
+      toast.info("Please fill the form Completely")
+    }
+  }
 
   return (
     <div className='w-full min-h-screen flex justify-center items-center flex-col bg-[url(/loginbg.jpg)] bg-cover bg-center'>
@@ -17,15 +35,16 @@ function Auth({insideRegister}) {
           <div>
             <h2 className='text-2xl'>{insideRegister?"Register":"Login"}</h2>
             <form className='my-2 w-full'>
+              {/* username */}
              {
               insideRegister &&
-              <input type="text" placeholder='Username' className='bg-white text-black placeholder-gray-400 w-full p-2 rounded ' />
+              <input value={userDetails.username} onChange={(e)=>setUserDetails({...userDetails,username:e.target.value})} type="text" placeholder='Username' className='bg-white text-black placeholder-gray-400 w-full p-2 rounded ' />
              }
               {/* email */}
-              <input type="text" placeholder='Email ID' className='bg-white text-black placeholder-gray-400 w-full p-2 rounded my-5' />
+              <input value={userDetails.email} onChange={(e)=>setUserDetails({...userDetails,email:e.target.value})} type="text" placeholder='Email ID' className='bg-white text-black placeholder-gray-400 w-full p-2 rounded my-5' />
               {/* password */}
               <div className='flex items-center'>
-                <input type={viewPassword?"password":"text"}  placeholder='Password' className='bg-white text-black placeholder-gray-400 w-full p-2 rounded mb-2' />
+                <input value={userDetails.password} onChange={(e)=>setUserDetails({...userDetails,password:e.target.value})} type={viewPassword?"password":"text"}  placeholder='Password' className='bg-white text-black placeholder-gray-400 w-full p-2 rounded mb-2' />
                 { viewPassword?
                   <FaEyeSlash onClick={()=>setViewPassword(!viewPassword)} className='text-gray-400 cursor-pointer' style={{marginLeft:"-30px",marginTop:"-7px"}} />
                   :
@@ -45,7 +64,7 @@ function Auth({insideRegister}) {
                 <div className='text-center mt-3'>
                  {
                   insideRegister ?
-                  <button type='button' className='bg-green-700 p-2 w-full rounded'>Register</button>
+                  <button onClick={handleRegister} type='button' className='bg-green-700 p-2 w-full rounded'>Register</button>
                   :
                   <button type='button' className='bg-green-700 p-2 w-full rounded'>Login</button>
                  }
@@ -54,7 +73,7 @@ function Auth({insideRegister}) {
                 <div className='my-5 text-center'>
                   {
                     insideRegister?
-                    <p className='text-blue-500'>Are you a user ? <Link to={'/login'} className='underline ms-5'>Login</Link></p>
+                    <p className='text-blue-500'>Already a User ? <Link to={'/login'} className='underline ms-5'>Login</Link></p>
                     :
                     <p className='text-blue-500'>Are you a new user ? <Link to={'/register'} className='underline ms-5'>Register</Link></p>
 
@@ -65,6 +84,12 @@ function Auth({insideRegister}) {
 
         </div>
       </div>
+      {/* toast */}
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        theme="dark"
+ />
     </div>
   )
 }
