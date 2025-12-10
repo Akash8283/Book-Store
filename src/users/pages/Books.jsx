@@ -1,18 +1,26 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import Footer from '../../components/Footer'
 import { FaBars } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 
 function Books() {
-  const[showCategoryList,SetShowCategoryList] = useState(false)
-
-    
+  const [showCategoryList,SetShowCategoryList] = useState(false)
+  const [token,setToken] = useState("")  
+  
+  useEffect(()=>{
+    if (sessionStorage.getItem("token")) {
+      const userToken = sessionStorage.getItem("token")
+      setToken(userToken)
+    }
+  },[token])
 
   return (
     <>
      <Header/>
      {/* login - book page */}
+     {
+      token?
       <>
         {/* books page with view */}
         <div className='flex flex-col justify-center items-center my-5'>
@@ -90,7 +98,14 @@ function Books() {
             </div>
           </div>
       </>
-      {/* not login book page */}
+      :
+     <div className='w-full h-screen flex items-center flex-col justify-center'>
+     {/* not login book page */}
+     <img width={"30%"} src="https://cdn-icons-gif.flaticon.com/7920/7920895.gif" alt="lock screen" />
+     <p className=" text-xl font-bold my-5">Please <Link className='text-blue-700 underline' to={'/login'}>Login</Link> To Explore</p>
+     </div>
+      }
+
      <Footer/>
     </>
   )

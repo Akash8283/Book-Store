@@ -1,9 +1,32 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Header from '../components/Header'
 import Footer from '../../components/Footer'
 import { FaSearch } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify';
+
 function Home() {
+  const navigate = useNavigate()
+  const [searchKey,setSearchKey] =  useState("")
+
+  const handleSearch =()=>{
+     if (!searchKey) {
+      toast.warning("Please provide book title here!!!")
+     }
+     else if(!sessionStorage.getItem("token")){
+      toast.warning("Please Login to search Book!!!")
+      setTimeout(()=>{
+        navigate('/login')
+      },2500)
+     }
+     else if(sessionStorage.getItem("token")&&searchKey){
+        navigate('/books')
+     }
+     else{
+      toast.error("Something went wrong!!!")
+     }
+  }
+
   return (
     <>
       <Header/>
@@ -15,8 +38,8 @@ function Home() {
           <p>Gift your family and friends a book</p>
           {/* seacrh */}
           <div className='mt-9 flex items-center'>
-            <input type="text" className='rounded-3xl bg-white  text-black w-100 placeholder-gray-500 p-2' placeholder='Search Books Here'/>
-            <button className='text-gray-500' style={{marginLeft:"-40px"}}><FaSearch/></button>
+            <input onChange={e=>setSearchKey(e.target.value)} type="text" className='rounded-3xl bg-white  text-black w-100 placeholder-gray-500 p-2' placeholder='Search Books Here'/>
+            <button onClick={handleSearch} className='text-gray-500 cursor-pointer' style={{marginLeft:"-40px"}}><FaSearch/></button>
           </div>
          </div>
          </div>
@@ -95,6 +118,12 @@ function Home() {
             {/* feedback */}
            </div>
          </section>
+         {/* toast */}
+               <ToastContainer
+                 position="top-center"
+                 autoClose={2000}
+                 theme="dark"
+                />
        </div>
       <Footer/>
     </>

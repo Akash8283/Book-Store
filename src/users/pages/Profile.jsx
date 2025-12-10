@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import Footer from '../../components/Footer'
 import { FaCircleCheck } from 'react-icons/fa6'
@@ -9,6 +9,17 @@ import Purchase from '../components/Purchase'
 
 function Profile() {
   const [tab,setTab] = useState(1)
+  const [dp,setDp] = useState("")
+  const [username,setUsername] = useState("")
+  console.log(username,dp);
+  
+  useEffect(()=>{
+    if (sessionStorage.getItem("token") && sessionStorage.getItem("user")) {
+      const user = JSON.parse(sessionStorage.getItem("user"))
+      setUsername(user?.username)
+      setDp(user?.picture)
+    }
+  },[dp])
   return (
     <>
       <Header/>
@@ -16,11 +27,11 @@ function Profile() {
       <div style={{height:"200px"}} className='bg-black'></div>
       {/* profile image */}
       <div style={{width:"230px",height:"230px",borderRadius:"50%",marginLeft:"70px",marginTop:"-130px"}} className='bg-white p-3'>
-        <img style={{width:"200px",height:"200px",borderRadius:"50%"}} src="https://www.hollywoodreporter.com/wp-content/uploads/2021/09/Christopher-Nolan-attends-the-screening-of-2001-A-Space-Odyssey-Getty-H-2021.jpg" alt="" />
+        <img style={{width:"200px",height:"200px",borderRadius:"50%"}} src={dp?dp:"https://www.hollywoodreporter.com/wp-content/uploads/2021/09/Christopher-Nolan-attends-the-screening-of-2001-A-Space-Odyssey-Getty-H-2021.jpg"} alt="" />
       </div>
       {/* name with edit block */}
       <div className='md:flex justify-between items-center md:px-25 px-5 my-5'>
-        <h1 className='text-2xl font-bold flex items-center '>Username <FaCircleCheck className='text-blue-500 ms-5'/></h1>
+        <h1 className='text-2xl font-bold flex items-center '>{username?username:"Username"} <FaCircleCheck className='text-blue-500 ms-5'/></h1>
         <Edit/>
       </div>
       <p className='text-justify md:px-25 px-5 my-5'>I’m a regular reader who uses this bookstore mainly to discover affordable second-hand books and track my recent purchases. My interests cover fiction, technology, and personal development.I prefer clean UI, fast search results, and personalized recommendations that actually reflect my reading history—not random suggestions. I usually browse during late evenings, so a dark mode option is useful. I expect quick order updates, reliable delivery timelines, and a simple return/refund flow without unnecessary steps.</p>
