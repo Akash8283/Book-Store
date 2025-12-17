@@ -3,17 +3,35 @@ import Header from '../components/Header'
 import Footer from '../../components/Footer'
 import { FaBars } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
+import { getAllBooksPageAPI } from '../../services/allAPI'
 
 function Books() {
   const [showCategoryList,SetShowCategoryList] = useState(false)
   const [token,setToken] = useState("")  
+  const [allBooks,setAllBooks] = useState([])
+
+  console.log(allBooks);
   
   useEffect(()=>{
     if (sessionStorage.getItem("token")) {
       const userToken = sessionStorage.getItem("token")
       setToken(userToken)
+      getAllBooks(userToken)
     }
   },[token])
+
+  const getAllBooks = async(token)=>{
+    const reqHeader = {
+      "Authorization" : `Bearer ${token}`
+    }
+    const result = await getAllBooksPageAPI(reqHeader)
+    if (result.status==200) {
+      setAllBooks(result.data)
+    }
+    else{
+      console.log(result);
+    }
+  }
 
   return (
     <>
@@ -57,43 +75,24 @@ function Books() {
             </div>
             {/* book row */}
             <div className="col-span-3">
-              <div className="md:grid grid-cols-4 mt-5 md:mt-0">
+              <div className="md:grid grid-cols-4 mt-5 md:mt-0 ">
                 {/* book card div1 */}
-                <div className=" shadow rounded p-3 mx-4 mb-4 md:mb-0">
-                  <img width={"300px"} height={"300px"} src="https://images.pexels.com/photos/17641104/pexels-photo-17641104.jpeg?cs=srgb&dl=pexels-book-hut-440747141-17641104.jpg&fm=jpg" alt="book" />
+                {
+                  allBooks?.length>0?
+                   allBooks?.map(books=>(
+                    <div key={books?._id} className=" shadow rounded p-3 mx-4 mb-4 md:mb-0">
+                  <img width={"300px"} height={"300px"} src={books?.imageURL} alt="book" />
                   <div className='flex justify-center items-center flex-col mt-4'>
-                    <h3 className='text-gray-700 font-bold text-lg'>Author</h3>
-                    <h4 className='text-lg'>Title</h4>
-                    <Link to={'/books/id/view'} className='px-5 py-2 bg-black mt-2 text-white'>View</Link>
+                    <h3 className='text-gray-700 font-bold text-lg'>{books?.author}</h3>
+                    <h4 className='text-lg'>{books?.title}</h4>
+                    <Link to={`/books/${books?.id}/view`} className='px-5 py-2 bg-black mt-2 text-white'>View</Link>
                   </div>
                 </div>
-                {/* book card div1 */}
-                <div className=" shadow rounded p-3 mx-4 mb-4 md:mb-0">
-                  <img width={"300px"} height={"300px"} src="https://images.pexels.com/photos/17641104/pexels-photo-17641104.jpeg?cs=srgb&dl=pexels-book-hut-440747141-17641104.jpg&fm=jpg" alt="book" />
-                  <div className='flex justify-center items-center flex-col mt-4'>
-                    <h3 className='text-gray-700 font-bold text-lg'>Author</h3>
-                    <h4 className='text-lg'>Title</h4>
-                    <Link to={'/books/id/view'} className='px-5 py-2 bg-black mt-2 text-white'>View</Link>
-                  </div>
-                </div>
-                {/* book card div1 */}
-                <div className=" shadow rounded p-3 mx-4 mb-4 md:mb-0">
-                  <img width={"300px"} height={"300px"} src="https://images.pexels.com/photos/17641104/pexels-photo-17641104.jpeg?cs=srgb&dl=pexels-book-hut-440747141-17641104.jpg&fm=jpg" alt="book" />
-                  <div className='flex justify-center items-center flex-col mt-4'>
-                    <h3 className='text-gray-700 font-bold text-lg'>Author</h3>
-                    <h4 className='text-lg'>Title</h4>
-                    <Link to={'/books/id/view'} className='px-5 py-2 bg-black mt-2 text-white'>View</Link>
-                  </div>
-                </div>
-                {/* book card div1 */}
-                <div className=" shadow rounded p-3 mx-4 mb-4 md:mb-0">
-                  <img width={"300px"} height={"300px"} src="https://images.pexels.com/photos/17641104/pexels-photo-17641104.jpeg?cs=srgb&dl=pexels-book-hut-440747141-17641104.jpg&fm=jpg" alt="book" />
-                  <div className='flex justify-center items-center flex-col mt-4'>
-                    <h3 className='text-gray-700 font-bold text-lg'>Author</h3>
-                    <h4 className='text-lg'>Title</h4>
-                    <Link to={'/books/id/view'} className='px-5 py-2 bg-black mt-2 text-white'>View</Link>
-                  </div>
-                </div>
+                   ))
+                  :
+                  <p className='font-bold'>Loading...</p>
+                }
+
               </div>
             </div>
           </div>
