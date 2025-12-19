@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Header from '../components/Header'
 import Footer from '../../components/Footer'
 import { FaBars } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import { getAllBooksPageAPI } from '../../services/allAPI'
+import { searchContext } from '../../contextAPI/ShareContext'
 
 function Books() {
+
+  const {searchKey,setSearchKey} = useContext(searchContext)
   const [showCategoryList,SetShowCategoryList] = useState(false)
   const [token,setToken] = useState("")  
   const [allBooks,setAllBooks] = useState([])
-
-  console.log(allBooks);
+  const [allCategory,setAllCategory] = useState([])
+  const [tempAllBooks,setTempAllBooks] = useState([])
+  // console.log(allBooks);
   
   useEffect(()=>{
     if (sessionStorage.getItem("token")) {
@@ -18,19 +22,33 @@ function Books() {
       setToken(userToken)
       getAllBooks(userToken)
     }
-  },[token])
+  },[searchKey])
 
   const getAllBooks = async(token)=>{
     const reqHeader = {
       "Authorization" : `Bearer ${token}`
     }
-    const result = await getAllBooksPageAPI(reqHeader)
+    const result = await getAllBooksPageAPI(reqHeader,searchKey)
     if (result.status==200) {
       setAllBooks(result.data)
+      setTempAllBooks(result.data)
+      const tempAllCategory = result.data?.map(item=>item.category)
+      const tempCategorySet = new Set(tempAllCategory)
+      console.log([...tempCategorySet]);
+      setAllCategory([...tempCategorySet])
     }
     else{
       console.log(result);
     }
+  }
+
+  const filterBooks = async(category)=>{
+     if (category=="all") {
+      setAllBooks(tempAllBooks)
+     }
+     else{
+      setAllBooks(tempAllBooks?.filter(item=>item.category==category))
+     }
   }
 
   return (
@@ -45,7 +63,7 @@ function Books() {
           {/* collection */}
           <h1 className='text-3xl font-bold my-5'>All Books</h1>
           <div className='flex my-5'>
-            <input type="text" placeholder='Search Bt Title' className='border border-gray-400 w-100 p-2'/>
+            <input value={searchKey} onChange={e=>setSearchKey(e.target.value)} type="text" placeholder='Search Bt Title' className='border border-gray-400 w-100 p-2'/>
             <button className='bg-black p-2 text-white'>Search</button>
           </div>
           {/* book row */}
@@ -63,14 +81,18 @@ function Books() {
               <div className={showCategoryList?"block":'md:block hidden '}>
                 {/* category-1 */}
                  <div className='mt-3'>
-                   <input type="radio" name='filter' id='all' />
+                   <input onClick={()=>filterBooks("all")} type="radio" name='filter' id='all' />
                    <label className='ms-3' htmlFor="all">All</label>
                  </div>
                  {/* book category last */}
-                 <div className='mt-3'>
-                   <input type="radio" name='filter' id='demo' />
-                   <label className='ms-3' htmlFor="demo ">Category Name</label>
-                 </div>
+                 {
+                  allCategory?.map((category,index)=>(
+                    <div key={index} className='mt-3'>
+                      <input onClick={()=>filterBooks(category)} type="radio" name='filter' id={category} />
+                      <label className='ms-3' htmlFor={category}>{category}</label>
+                    </div>
+                  ))
+                 }
               </div>
             </div>
             {/* book row */}
@@ -85,12 +107,12 @@ function Books() {
                   <div className='flex justify-center items-center flex-col mt-4'>
                     <h3 className='text-gray-700 font-bold text-lg'>{books?.author}</h3>
                     <h4 className='text-lg'>{books?.title}</h4>
-                    <Link to={`/books/${books?.id}/view`} className='px-5 py-2 bg-black mt-2 text-white'>View</Link>
+                    <Link to={`/books/${books?._id}/view`} className='px-5 py-2 bg-black mt-2 text-white'>View</Link>
                   </div>
                 </div>
                    ))
                   :
-                  <p className='font-bold'>Loading...</p>
+                  <p className='font-bold'>Book Not Found</p>
                 }
 
               </div>

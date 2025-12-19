@@ -28,8 +28,8 @@ export const getHomePageBookAPI = async()=>{
 }
 
 // /books/all : bookpage api : called by books component when page loads - authorised user
-export const getAllBooksPageAPI = async(reqHeader)=>{
-    return await commonAPI("GET",`${serverURL}/books/all`,{},reqHeader)
+export const getAllBooksPageAPI = async(reqHeader,searchKey)=>{
+    return await commonAPI("GET",`${serverURL}/books/all?search=${searchKey}`,{},reqHeader)
 }
 
 // /user-books/all : called by bookstatus api when page load
@@ -40,4 +40,9 @@ export const getAllUserBooksAPI = async(reqHeader)=>{
 // /user-books/all : called by bookstatus api when page load
 export const getAllUserBoughtBooksAPI = async(reqHeader)=>{
     return await commonAPI("GET",`${serverURL}/user-books/bought`,{},reqHeader)
+}
+
+// /books/:id/view : get request by view when page loads
+export const getUserBookViewAPI = async(reqHeader,id)=>{
+    return await commonAPI("GET",`${serverURL}/books/${id}/view`,{},reqHeader)
 }

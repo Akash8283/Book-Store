@@ -2,40 +2,70 @@ import React, { useState } from 'react'
 import Footer from '../../components/Footer'
 import Header from '../components/Header'
 import { FaBackward, FaCamera, FaEye } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { FaX } from 'react-icons/fa6'
+import { getUserBookViewAPI } from '../../services/allAPI'
+import { useEffect } from 'react'
+import serverURL from '../../services/serverURL'
 
 function View() {
   const [modalStatus,setModalStatus] = useState(false)
+  const [viewBook,setViewBook] = useState({})
+  const {id} = useParams()
+  // console.log(id);
+  console.log(viewBook);
+
+  useEffect(()=>{
+    getUserViewBook()
+  },[])
+
+  const getUserViewBook = async()=>{
+      const token = sessionStorage.getItem("token")
+      if (token) {
+        const reqHeader = {
+        "Authorization" : `Bearer ${token}`
+      }
+      const result = await getUserBookViewAPI(reqHeader,id)
+      // console.log(result)
+      if (result.status == 200) {
+        setViewBook(result.data)
+      }
+      else{
+        console.log(result);
+      }
+      }
+  }
+
   return (
     <>
     <Header/>
      <div className='md:m-10 m-5 '>
       <div className="shadow rounded p-5 bg-gray-100">
-        <div className='md:grid grid-cols-4 gap-x-10'>
+
+            <div key={viewBook?._id} className='md:grid grid-cols-4 gap-x-10'>
           {/* image */}
           <div className="col-span-1">
-            <img className='w-full' src="https://images.pexels.com/photos/17641104/pexels-photo-17641104.jpeg?cs=srgb&dl=pexels-book-hut-440747141-17641104.jpg&fm=jpg" alt="" />
+            <img className='w-full' src={viewBook?.imageURL} alt="" />
           </div>
           {/* book details column */}
           <div className="col-span-3">
             <div className="flex justify-between mt-5 md:mt-0">
-              <h1 className='text-2xl font-black'>Book-Title</h1>
+              <h1 className='text-2xl font-black'>{viewBook?.title}</h1>
               <button onClick={()=>setModalStatus(true)} className='text-gray-400'><FaEye className='cursor-pointer'/></button>
             </div>
-            <p className='text-gray-600 my-3'>Author</p>
+            <p className='text-gray-600 my-3'>- {viewBook?.author}</p>
             <div className='md:grid grid-cols-3 gap-5 my-10'>
-              <p className='font-bold'>Publisher :</p>
-              <p className='font-bold'>Languages :</p>
-              <p className='font-bold'>No. of Pages :</p>
-              <p className='font-bold'>Original Price :</p>
-              <p className='font-bold'>ISBN :</p>
-              <p className='font-bold'>Category :</p>
-              <p className='font-bold'>Seller :</p>
+              <p className='font-bold'>Publisher : {viewBook?.publisher}</p>
+              <p className='font-bold'>Languages : {viewBook?.language}</p>
+              <p className='font-bold'>No. of Pages : {viewBook?.pages}</p>
+              <p className='font-bold'>Original Price : {viewBook?.price}</p>
+              <p className='font-bold'>ISBN : {viewBook?.isbn}</p>
+              <p className='font-bold'>Category : {viewBook?.category}</p>
+              <p className='font-bold'>Seller : {viewBook?.sellerMail}</p>
             </div>
             <div className='md:my-10 my-4'>
               <p className='font-bold text-lg'>
-                Abstart
+                {viewBook?.abstract}
               </p>
             </div>
             <div className='flex justify-end'>
@@ -44,6 +74,7 @@ function View() {
             </div>
           </div>
         </div>
+
       </div>
      </div>
      {/* modal */}
@@ -60,10 +91,14 @@ function View() {
               </div>
             {/* modal body */}
             <div className='relative p-5'>
-              <p className='text-gray-500 flex items-center'><FaCamera className='me-2'/>Camera Clicks of the books in the hand of seller</p>
+              <p className='text-gray-500 flex items-center'><FaCamera className='me-2'/>Camera Clicks of the books </p>
               {/* books images in row*/}
               <div className='md:flex flex-wrap my-4'>
-                <img className='md:w-75 rounded w-25 md:me-2 mb-3 md:mb-0' src="https://images.pexels.com/photos/17641104/pexels-photo-17641104.jpeg?cs=srgb&dl=pexels-book-hut-440747141-17641104.jpg&fm=jpg" alt="" />
+                {
+                  viewBook?.uploadImages?.map(filename=>(
+                    <img key={filename} className='md:w-75 rounded w-25 md:me-2 mb-3 md:mb-0' src={`${serverURL}/uploads/${filename}`} alt="" />
+                  ))
+                }
               </div>
             </div>
           </div>

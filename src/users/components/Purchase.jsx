@@ -42,12 +42,8 @@ function Purchase() {
                             <h4 className='text-lg text-red-500'>$ {book?.price}</h4>
                             <p className='text-justify'>{book?.abstract}</p>
                             <div className='flex mt-5'>
-                            {
-                                book?.status == "sold"?
-                                <img width={"160px"} height={'160px'} src="https://www.onlygfx.com/wp-content/uploads/2017/12/sold-stamp-3.png" alt="" />
-                                :
-                                <p></p>
-                            }
+                               {/* purchase */}
+                                <img width={"160px"} height={'160px'} src="https://static.vecteezy.com/system/resources/previews/023/629/698/non_2x/web-button-icon-purchase-button-free-png.png" alt="" />
                         </div>
                         </div>
                         <div className='px-4 mt-4 md:mt-0'>
