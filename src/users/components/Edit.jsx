@@ -23,7 +23,7 @@ function Edit() {
                   {/* image */}
                   <label htmlFor="uploading">
                     <input type="file" id='uploading' hidden/>
-                    <img style={{width:"150px",height:"150px",borderRadius:"50%"}} src="https://www.hollywoodreporter.com/wp-content/uploads/2021/09/Christopher-Nolan-attends-the-screening-of-2001-A-Space-Odyssey-Getty-H-2021.jpg" alt="" />
+                    <img style={{width:"100px",height:"100px",borderRadius:"50%"}} src="https://www.hollywoodreporter.com/wp-content/uploads/2021/09/Christopher-Nolan-attends-the-screening-of-2001-A-Space-Odyssey-Getty-H-2021.jpg" alt="" />
                   </label>
                   {/* name */}
                   <div className="mt-10 mb-3 w-full px-5">
@@ -38,7 +38,7 @@ function Edit() {
                   </div>
                   {/* bio */}
                   <div className=" mb-3 w-full px-5">
-                    <input type="text" placeholder='Bio' rows={3} className='border border-gray-300 p-2 w-full rounded' />
+                    <input type="text" placeholder='Bio' rows={2} className='border border-gray-300 p-2 w-full rounded' />
                   </div>
                   {/* button */}
                   <div className='mb-3 flex justify-end px-5 w-full mt-5'>
