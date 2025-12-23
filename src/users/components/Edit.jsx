@@ -1,9 +1,57 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaEdit } from 'react-icons/fa'
 import { FaX } from 'react-icons/fa6'
+import serverURL from '../../services/serverURL'
+import { ToastContainer, toast } from 'react-toastify';
 
 function Edit() {
   const [offcanvasStatus,setOffCanvasStatus] = useState(false)
+  const [userDetails,setUserDetails] = useState({
+    id:"",username:"",password:"",role:"",bio:"",picture:""
+  })
+  const [confirmPassword,setConfirmPassword] = useState("")
+  const [existingPicture,setExistingPicture] = useState("")
+  const [preview,setPreview] = useState("")
+  const [passwordMatch,setPasswordMatch] = useState(true)
+
+  useEffect(()=>{
+    if (sessionStorage.getItem("user")) {
+      const user = JSON.parse(sessionStorage.getItem("user"))
+      setUserDetails({...userDetails,id:user._id,username:user.username,role:user.role,bio:user.bio})
+      setExistingPicture(user.picture)
+    }
+  },[])
+
+  const handleUploadPicture =(imageFile)=>{
+    setUserDetails({...userDetails,picture:imageFile})
+    const url = URL.createObjectURL(imageFile)
+    setPreview(url)
+  }
+
+  const checkPasswordMatch =(data)=>{
+    setConfirmPassword(data)
+    userDetails.password == data? setPasswordMatch(true):setPasswordMatch(false)
+  }
+
+  const restForm = ()=>{
+    const user = JSON.parse(sessionStorage.getItem("user"))
+    setUserDetails({...userDetails,id:user._id,username:user.username,role:user.role,bio:user.bio,password:""})
+    setExistingPicture(user.picture)
+    setPreview("")
+    setConfirmPassword("")
+    setPasswordMatch(true)
+  }
+
+  const handleProfileUpdate = async()=>{
+     const {username,password,bio,role,id,picture} = userDetails
+     if (!username || !password || !bio || !confirmPassword) {
+      toast.info("Please fill the form completely")
+     }
+     else{
+      alert("api call")
+     }
+  }
+
   return (
     <div>
         <button onClick={()=>setOffCanvasStatus(true)} className='flex items-center text-blue-600 border p-2 rounded hover:bg-blue-600 hover:text-white'>Edit <FaEdit className='ms-2'/> </button>
@@ -22,33 +70,45 @@ function Edit() {
                 <div className='flex justify-center items-center flex-col my-5'>
                   {/* image */}
                   <label htmlFor="uploading">
-                    <input type="file" id='uploading' hidden/>
-                    <img style={{width:"100px",height:"100px",borderRadius:"50%"}} src="https://www.hollywoodreporter.com/wp-content/uploads/2021/09/Christopher-Nolan-attends-the-screening-of-2001-A-Space-Odyssey-Getty-H-2021.jpg" alt="" />
+                    <input onChange={e=>handleUploadPicture(e.target.files[0])} type="file" id='uploading' hidden/>
+                    {
+                      existingPicture ?
+                      <img style={{width:"100px",height:"100px",borderRadius:"50%"}} src={preview?preview:existingPicture.startsWith("https://lh3.googleusercontent.com/")?existingPicture:`${serverURL}/uploads/${existingPicture}`} alt="" />
+                      :
+                      <img style={{width:"100px",height:"100px",borderRadius:"50%"}} src={preview?preview:"https://static.thenounproject.com/png/2532839-200.png"} alt="" />
+                    }
                   </label>
                   {/* name */}
                   <div className="mt-10 mb-3 w-full px-5">
-                    <input type="text" placeholder='Username'className='border border-gray-300 p-2 w-full rounded' />
+                    <input value={userDetails.username} onChange={e=>setUserDetails({...userDetails,username:e.target.value})} type="text" placeholder='Username'className='border border-gray-300 p-2 w-full rounded' />
                   </div>
                   {/* password */}
                   <div className=" mb-3 w-full px-5">
-                    <input type="password" placeholder='New Password'className='border border-gray-300 p-2 w-full rounded' />
+                    <input value={userDetails.password} onChange={e=>setUserDetails({...userDetails,password:e.target.value})} type="password" placeholder='New Password'className='border border-gray-300 p-2 w-full rounded' />
                   </div>
                   <div className=" mb-3 w-full px-5">
-                    <input type="password" placeholder='New Confirm Password'className='border border-gray-300 p-2 w-full rounded' />
+                    <input value={confirmPassword} onChange={e=>checkPasswordMatch(e.target.value)} type="password" placeholder='New Confirm Password'className='border border-gray-300 p-2 w-full rounded' />
                   </div>
+                  {!passwordMatch && <div className='mb-3 w-full px-5 font-bold text-red-600 text-xs'>*Confirm password must match with new password</div>}
                   {/* bio */}
                   <div className=" mb-3 w-full px-5">
-                    <input type="text" placeholder='Bio' rows={2} className='border border-gray-300 p-2 w-full rounded' />
+                    <input value={userDetails.bio} onChange={e=>setUserDetails({...userDetails,bio:e.target.value})} type="text" placeholder='Bio' rows={2} className='border border-gray-300 p-2 w-full rounded' />
                   </div>
                   {/* button */}
                   <div className='mb-3 flex justify-end px-5 w-full mt-5'>
-                    <button className='px-3 rounded text-white bg-red-600 py-2 hover:bg-red-700 '>RESET</button>
-                    <button className='px-3 rounded text-white bg-green-600 py-2 ms-3 hover:bg-green-800'>UPDATE</button>
+                    <button onClick={restForm} className='px-3 rounded text-white bg-red-600 py-2 hover:bg-red-700 '>RESET</button>
+                    <button onClick={handleProfileUpdate} className='px-3 rounded text-white bg-green-600 py-2 ms-3 hover:bg-green-800' disabled={!passwordMatch?true:false}>UPDATE</button>
                   </div>
                 </div>
             </div>
             </div>
         </div>}
+             {/* toast */}
+              <ToastContainer
+                position="top-center"
+                autoClose={2000}
+                theme="dark"
+              />
     </div>
   )
 }

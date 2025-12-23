@@ -6,6 +6,8 @@ import Edit from '../components/Edit'
 import SellBook from '../components/SellBook'
 import BookStatus from '../components/BookStatus'
 import Purchase from '../components/Purchase'
+import serverURL from '../../services/serverURL'
+
 
 function Profile() {
   const [tab,setTab] = useState(1)
@@ -27,7 +29,7 @@ function Profile() {
       <div style={{height:"200px"}} className='bg-black'></div>
       {/* profile image */}
       <div style={{width:"230px",height:"230px",borderRadius:"50%",marginLeft:"70px",marginTop:"-130px"}} className='bg-white p-3'>
-        <img style={{width:"200px",height:"200px",borderRadius:"50%"}} src={dp?dp:"https://www.hollywoodreporter.com/wp-content/uploads/2021/09/Christopher-Nolan-attends-the-screening-of-2001-A-Space-Odyssey-Getty-H-2021.jpg"} alt="" />
+        <img style={{width:"200px",height:"200px",borderRadius:"50%"}} src={dp?dp.startsWith("https://lh3.googleusercontent.com/")?dp:`${serverURL}/uploads/${dp}`:"https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlciUyMHByb2ZpbGV8ZW58MHx8MHx8fDA%3D"} alt="" />
       </div>
       {/* name with edit block */}
       <div className='md:flex justify-between items-center md:px-25 px-5 my-5'>
