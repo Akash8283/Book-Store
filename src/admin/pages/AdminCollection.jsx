@@ -1,11 +1,74 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AdminHeader from '../components/AdminHeader'
 import Footer from '../../components/Footer'
 import AdminSideBar from '../components/AdminSideBar'
+import { getAllAdminBooksAPI, getAllAdminUsersAPI, updateBookStatusAPI } from '../../services/allAPI'
+import serverURL from '../../services/serverURL'
+import { ToastContainer, toast } from 'react-toastify';
+
 
 function AdminCollection() {
 
   const [tab,setTab] = useState(1)
+  const [allBooks,setAllBooks] = useState([])
+  const [allUsers,setAllUsers] = useState([])
+  console.log(allUsers);
+  console.log(allBooks);
+  
+  useEffect(()=>{
+    const token = sessionStorage.getItem("token")
+    if (token) {
+      if (tab == 1) {
+        getAllBooks(token)
+      }
+      else{
+        getAllUsers(token)
+      }
+    }
+  },[tab])
+
+  const getAllBooks = async (token)=>{
+    const reqHeader = {
+        "Authorization" : `Bearer ${token}`
+      }
+    const result = await getAllAdminBooksAPI(reqHeader)
+    if (result.status == 200) {
+      setAllBooks(result.data)
+    }
+    else{
+      console.log(result);
+    }
+  }
+
+  const getAllUsers = async(token)=>{
+    const reqHeader = {
+        "Authorization" : `Bearer ${token}`
+      }
+    const result = await getAllAdminUsersAPI(reqHeader) 
+    if (result.status == 200) {
+      setAllUsers(result.data)
+    }
+    else{
+      console.log(result);
+    } 
+  }
+
+  const updateBookStatus = async(id)=>{
+    const token = sessionStorage.getItem("token")
+    if (token) {
+      const reqHeader = {
+        "Authorization" : `Bearer ${token}`
+      }
+      const result = await updateBookStatusAPI(id,reqHeader)
+      if (result.status == 200) {
+        toast.success("Book Status Updated!!!")
+        getAllBooks(token)
+      }
+      else{
+        console.log(result);
+      }
+    }
+  }
 
   return (
     <>
@@ -26,15 +89,29 @@ function AdminCollection() {
           tab==1 &&
           <div className='md:grid grid-cols-4 w-full my-5'>
             {/* duplicate book card */}
-             <div className=" shadow rounded p-3 mx-4 mb-4 md:mb-0">
-              <img width={"300px"} height={"300px"} src="https://images.pexels.com/photos/17641104/pexels-photo-17641104.jpeg?cs=srgb&dl=pexels-book-hut-440747141-17641104.jpg&fm=jpg" alt="book" />
+             {
+              allBooks?.length>0?
+              allBooks?.map(book=>(
+                <div key={book?._id} className=" shadow rounded p-3 mx-4 mb-4 md:mb-0">
+              <img width={"300px"} height={"300px"} src={book?.imageURL} alt="book" />
               <div className='flex justify-center items-center flex-col mt-4'>
-                <h3 className='text-gray-700 font-bold text-lg'>Author</h3>
-                <h4 className='text-lg'>Title</h4>
-                <h4>$ Price</h4>
-                <div className='grid mt-3 w-full'><button className='bg-green-700 mt-3 p-3 px-3 rounded text-white cursor-pointer'>APPROVE</button></div>
+                <h3 className='text-gray-700 font-bold text-lg'>{book?.author}</h3>
+                <h4 className='text-lg'>{book?.title}</h4>
+                <h4>$ {book?.discountPrice}</h4>
+                <div className='grid mt-3 w-full'>
+                  {
+                    book?.status !="approved"?
+                    <button onClick={()=>updateBookStatus(book._id)} className='bg-green-700 mt-3 p-3 px-3 rounded text-white cursor-pointer'>APPROVE</button>
+                    :
+                    <div className='flex justify-center'><img width={"80px"}  src="https://png.pngtree.com/png-vector/20221215/ourmid/pngtree-green-check-mark-png-image_6525691.png" alt="" /></div>
+                  }
+                </div>
               </div>
             </div>
+              ))
+              :
+              <p>Loading...</p>
+             }
             
           </div>
         }
@@ -42,107 +119,37 @@ function AdminCollection() {
           tab==2 &&
           <div className='md:grid grid-cols-3 w-full my-5'>
             {/* duplicate Users Card */}
-            <div className='rounded bg-gray-200 p-1 text-wrap m-2'>
-              <p className="text-red-600 font-bold">ID: vefj64tvhh</p>
-              <div className='flex items-center text-wrap mt-2'>
-                {/* user image */}
-                <img width={'80px'} height={'80px'} style={{borderRadius:"50%"}} src="https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png" alt="" />
-                {/* content */}
-                <div className='ms-5'>
-                  <h4 className='font-bold text-2xl text-blue-600'>name</h4>
-                  <p className=''>akash@gmail.com</p>
-                </div>
+           {
+            allUsers?.length>0?
+             allUsers?.map(user=>(
+               <div key={user?._id} className='rounded bg-gray-200 p-1 text-wrap m-2'>
+                  <p className="text-red-600 font-bold text-sm">ID: {user?._id}</p>
+                  <div className='flex items-center text-wrap mt-2'>
+                    {/* user image */}
+                    <img width={'80px'} height={'80px'} style={{borderRadius:"50%"}} src={user?.picture?user?.picture.startsWith("https://lh3.googleusercontent.com/")?user?.picture:`${serverURL}/uploads/${user?.picture}`:"https://cdn-icons-png.freepik.com/256/12636/12636538.png?semt=ais_white_label"} alt="" />
+                    {/* content */}
+                    <div className='ms-5'>
+                      <h4 className='font-bold text-2xl text-blue-600'>{user?.username}</h4>
+                      <p className='text-xs'>{user?.email}</p>
+                    </div>
+                  </div>
               </div>
-            </div>
-            <div className='rounded bg-gray-200 p-1 text-wrap m-2'>
-              <p className="text-red-600 font-bold">ID: vefj64tvhh</p>
-              <div className='flex items-center text-wrap mt-2'>
-                {/* user image */}
-                <img width={'80px'} height={'80px'} style={{borderRadius:"50%"}} src="https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png" alt="" />
-                {/* content */}
-                <div className='ms-5'>
-                  <h4 className='font-bold text-2xl text-blue-600'>name</h4>
-                  <p className=''>akash@gmail.com</p>
-                </div>
-              </div>
-            </div>
-            <div className='rounded bg-gray-200 p-1 text-wrap m-2'>
-              <p className="text-red-600 font-bold">ID: vefj64tvhh</p>
-              <div className='flex items-center text-wrap mt-2'>
-                {/* user image */}
-                <img width={'80px'} height={'80px'} style={{borderRadius:"50%"}} src="https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png" alt="" />
-                {/* content */}
-                <div className='ms-5'>
-                  <h4 className='font-bold text-2xl text-blue-600'>name</h4>
-                  <p className=''>akash@gmail.com</p>
-                </div>
-              </div>
-            </div>
-            <div className='rounded bg-gray-200 p-1 text-wrap m-2'>
-              <p className="text-red-600 font-bold">ID: vefj64tvhh</p>
-              <div className='flex items-center text-wrap mt-2'>
-                {/* user image */}
-                <img width={'80px'} height={'80px'} style={{borderRadius:"50%"}} src="https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png" alt="" />
-                {/* content */}
-                <div className='ms-5'>
-                  <h4 className='font-bold text-2xl text-blue-600'>name</h4>
-                  <p className=''>akash@gmail.com</p>
-                </div>
-              </div>
-            </div>
-            <div className='rounded bg-gray-200 p-1 text-wrap m-2'>
-              <p className="text-red-600 font-bold">ID: vefj64tvhh</p>
-              <div className='flex items-center text-wrap mt-2'>
-                {/* user image */}
-                <img width={'80px'} height={'80px'} style={{borderRadius:"50%"}} src="https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png" alt="" />
-                {/* content */}
-                <div className='ms-5'>
-                  <h4 className='font-bold text-2xl text-blue-600'>name</h4>
-                  <p className=''>akash@gmail.com</p>
-                </div>
-              </div>
-            </div>
-            <div className='rounded bg-gray-200 p-1 text-wrap m-2'>
-              <p className="text-red-600 font-bold">ID: vefj64tvhh</p>
-              <div className='flex items-center text-wrap mt-2'>
-                {/* user image */}
-                <img width={'80px'} height={'80px'} style={{borderRadius:"50%"}} src="https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png" alt="" />
-                {/* content */}
-                <div className='ms-5'>
-                  <h4 className='font-bold text-2xl text-blue-600'>name</h4>
-                  <p className=''>akash@gmail.com</p>
-                </div>
-              </div>
-            </div>
-            <div className='rounded bg-gray-200 p-1 text-wrap m-2'>
-              <p className="text-red-600 font-bold">ID: vefj64tvhh</p>
-              <div className='flex items-center text-wrap mt-2'>
-                {/* user image */}
-                <img width={'80px'} height={'80px'} style={{borderRadius:"50%"}} src="https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png" alt="" />
-                {/* content */}
-                <div className='ms-5'>
-                  <h4 className='font-bold text-2xl text-blue-600'>name</h4>
-                  <p className=''>akash@gmail.com</p>
-                </div>
-              </div>
-            </div>
-            <div className='rounded bg-gray-200 p-1 text-wrap m-2'>
-              <p className="text-red-600 font-bold">ID: vefj64tvhh</p>
-              <div className='flex items-center text-wrap mt-2'>
-                {/* user image */}
-                <img width={'80px'} height={'80px'} style={{borderRadius:"50%"}} src="https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png" alt="" />
-                {/* content */}
-                <div className='ms-5'>
-                  <h4 className='font-bold text-2xl text-blue-600'>name</h4>
-                  <p className=''>akash@gmail.com</p>
-                </div>
-              </div>
-            </div>
+             ))
+            :
+            <p>Loading...</p>
+           }
+            
           </div>
         }
       </div>
       </div>
       <Footer/>
+            {/* toast */}
+            <ToastContainer
+              position="top-center"
+              autoClose={2000}
+              theme="dark"
+            />
     </>
   )
 }

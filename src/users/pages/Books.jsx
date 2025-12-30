@@ -102,7 +102,7 @@ function Books() {
                 {
                   allBooks?.length>0?
                    allBooks?.map(books=>(
-                    <div key={books?._id} className=" shadow rounded p-3 mx-4 mb-4 md:mb-0">
+                    <div key={books?._id} className=" shadow rounded p-3 mx-4 mb-4 md:mb-0" hidden={books?.status!="approved"}>
                   <img width={"300px"} height={"300px"} src={books?.imageURL} alt="book" />
                   <div className='flex justify-center items-center flex-col mt-4'>
                     <h3 className='text-gray-700 font-bold text-lg'>{books?.author}</h3>

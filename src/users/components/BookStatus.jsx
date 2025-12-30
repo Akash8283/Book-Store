@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState } from 'react'
-import { getAllUserBooksAPI } from '../../services/allAPI';
+import { getAllUserBooksAPI, removeBookAPI } from '../../services/allAPI';
 import { useEffect } from 'react';
 
 function BookStatus() {
@@ -28,13 +28,30 @@ function BookStatus() {
         }
     }
     
+    const deleteBook = async (id)=>{
+        const token = sessionStorage.getItem("token")
+        if (token) {
+            const reqHeader = {
+                "Authorization" :`Bearer ${token}`
+            }
+            const result = await removeBookAPI(id,reqHeader)
+            if (result.status==200) {
+                setUserBooks(result.data)
+                getUserUploadBooks()
+            }
+            else{
+                console.log(result);
+            }
+        }
+    }
+
   return (
-    <div className='shadow p-10 mx-5 my-20 rounded'>
+    <div className='shadow p-10 mx-5 my-20 rounded '>
         {/* books div duplicate */}
         {
             userBooks?.length>0?
              userBooks?.map(book=>(
-                <div className="bg-gray-200 p-5 rounded">
+                <div className="bg-gray-200 p-5 rounded mb-2">
                     <div className="md:grid grid-cols-[3fr_1fr]">
                         <div>
                             <h2 className='text-2xl'>{book?.title}</h2>
@@ -55,7 +72,7 @@ function BookStatus() {
                         </div>
                         <div className='px-4 mt-4 md:mt-0'>
                             <img className='w-50' src={book?.imageURL} alt="" />
-                            <div className='flex justify-end'><button className='bg-red-600 p-2 text-white mt-5'>DELETE</button></div>
+                            <div className='flex justify-end'><button onClick={()=>deleteBook(book?._id)} className='bg-red-600 p-2 text-white mt-5'>DELETE</button></div>
                         </div>
                     </div>
                 </div>
