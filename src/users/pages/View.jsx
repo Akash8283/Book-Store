@@ -7,6 +7,7 @@ import { FaX } from 'react-icons/fa6'
 import { getUserBookViewAPI } from '../../services/allAPI'
 import { useEffect } from 'react'
 import serverURL from '../../services/serverURL'
+import {loadStripe} from '@stripe/stripe-js';
 
 function View() {
   const [modalStatus,setModalStatus] = useState(false)
@@ -34,6 +35,11 @@ function View() {
         console.log(result);
       }
       }
+  }
+
+  const makePayement = async()=>{
+    // 
+     const stripe = await loadStripe('pk_test_51SkJG37xckAV42zPyXA3pf86gLxKUGD738rlJgE2SwXpwl7CIzk2yT4ir9B6qdqccsMiL6rF7rtqDRjN9Z8h1UDD00fRzsNGsf')
   }
 
   return (
@@ -70,7 +76,7 @@ function View() {
             </div>
             <div className='flex justify-end'>
               <Link to={'/books'} className='bg-gray-600 px-3 py-2 flex items-center rounded text-white'><FaBackward className='me-2'/> Back</Link>
-              <Link to={'/books'} className='bg-green-700 px-3 py-2 flex items-center rounded ms-3 text-white'>Buy $ 25</Link>
+              <button onClick={makePayement} className='bg-green-700 px-3 py-2 flex items-center rounded ms-3 text-white'>Buy $ 25</button>
             </div>
           </div>
         </div>

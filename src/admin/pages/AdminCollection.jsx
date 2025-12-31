@@ -92,7 +92,7 @@ function AdminCollection() {
              {
               allBooks?.length>0?
               allBooks?.map(book=>(
-                <div key={book?._id} className=" shadow rounded p-3 mx-4 mb-4 md:mb-0">
+                <div key={book?._id} className=" shadow rounded p-3 mx-4 mb-4 md:mb-2">
               <img width={"300px"} height={"300px"} src={book?.imageURL} alt="book" />
               <div className='flex justify-center items-center flex-col mt-4'>
                 <h3 className='text-gray-700 font-bold text-lg'>{book?.author}</h3>

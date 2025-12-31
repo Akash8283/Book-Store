@@ -21,7 +21,7 @@ function Profile() {
       setUsername(user?.username)
       setDp(user?.picture)
     }
-  },[dp])
+  },[])
   return (
     <>
       <Header/>
