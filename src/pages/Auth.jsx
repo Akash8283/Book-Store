@@ -1,12 +1,15 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { FaEye, FaEyeSlash, FaUser } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 import { googleLoginAPI, loginAPI, registerAPI } from '../services/allAPI';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
+import { routeGuardContext } from '../contextAPI/AuthContext';
 
 function Auth({insideRegister}) {
+
+ const {role,setAuthorized} = useContext(routeGuardContext) 
  const navigate = useNavigate()
  const [viewPassword,setViewPassword] = useState(true)
  // store data from form
@@ -62,6 +65,7 @@ function Auth({insideRegister}) {
           toast.success("Login Successfull")
           sessionStorage.setItem("token",result.data.token)
           sessionStorage.setItem("user",JSON.stringify(result.data.user))
+          setAuthorized(true)
           setTimeout(()=>{
            if (result.data.user.role == "admin") {
             navigate('/admin/home')
@@ -100,6 +104,7 @@ function Auth({insideRegister}) {
           toast.success("Login Successfull")
           sessionStorage.setItem("token",result.data.token)
           sessionStorage.setItem("user",JSON.stringify(result.data.user))
+          setAuthorized(true)
           setTimeout(()=>{
            if (result.data.user.role == "admin") {
             navigate('/admin/home')

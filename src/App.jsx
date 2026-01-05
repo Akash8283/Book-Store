@@ -11,13 +11,15 @@ import AdminHome from './admin/pages/AdminHome'
 import AdminCollection from './admin/pages/AdminCollection'
 import AdminProfile from './admin/pages/AdminProfile'
 import Preloader from './components/Preloader'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import PaymentSuccess from './users/pages/PaymentSuccess'
 import PaymentError from './users/pages/PaymentError'
+import { routeGuardContext } from './contextAPI/AuthContext'
 
 
 function App() {
-     
+
+    const {role,setAuthorized} = useContext(routeGuardContext)
     const [loading,setLoading] = useState(true)
     
     setTimeout(()=>{
@@ -32,14 +34,22 @@ function App() {
         <Route path='/contact' element={<Contact/>}/>
         <Route path='/books' element={<Books/>}/>
 
-        <Route path='/user/profile' element={<Profile/>}/>
-        <Route path='/books/:id/view' element={<View/>}/>
-        <Route path='/user/payment-success' element={<PaymentSuccess/>}/>
-        <Route path='/user/payment-error' element={<PaymentError/>}/>
+        {
+          role =='user' &&
+          <>
+          <Route path='/user/profile' element={<Profile/>}/>
+          <Route path='/books/:id/view' element={<View/>}/>
+          <Route path='/user/payment-success' element={<PaymentSuccess/>}/>
+          <Route path='/user/payment-error' element={<PaymentError/>}/>
+        </>}
 
-        <Route path='/admin/home' element={<AdminHome/>}/>
-        <Route path='/admin/profile' element={<AdminProfile/>}/>
-        <Route path='/admin/resources' element={<AdminCollection/>}/>
+        {
+          role =='admin' &&
+          <>
+          <Route path='/admin/home' element={<AdminHome/>}/>
+          <Route path='/admin/profile' element={<AdminProfile/>}/>
+          <Route path='/admin/resources' element={<AdminCollection/>}/>
+        </>}
 
         <Route path='/*' element={<Pnf/>}/>
       </Routes>
